@@ -28,3 +28,11 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+## Project rules
+- The invitation flow lives in `src/components/invite/` (Cover → Journey → Main), orchestrated by `src/routes/index.tsx`; Journey is a single full-bleed transition film (Lovable Assets video) mounted under the Cover from page load so it buffers early, starts playing on tap, and hands off to Main when it ends — no blank frames.
+- Opening-scene characters, garden animals and butterflies are positioned in percentages of a fixed-aspect "stage" that matches the garden image, so they stay aligned with its perspective on every screen size.
+- Binary images are served via Lovable Assets pointers (`*.asset.json`), optimized to WebP where possible, to keep phone loading light.
+- Main-page ("halaman inti") ornaments are vector components in `src/components/invite/Ornaments.tsx`, colored by the royal-gold tokens; each one is a drop-in for a decorative image at the same box and orientation so layout never shifts when ornaments change.
+- Main-page panels use `Band` with a tone token (navy / wine / garden) and an optional translucent `scene` photo (`garden-scene` utility), so background variety stays in the design system rather than per-section styles.
+- Guest wishes live in the public `wishes` table (anyone may read and insert, nothing else) with realtime; validation rules are pure functions in `src/lib/wish-rules.ts` so they are unit-tested.
+- The 3D wish page (`WishCarousel3D`) renders only the cards near the active one on a looping ring, so it stays smooth no matter how many wishes arrive.

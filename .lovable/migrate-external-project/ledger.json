@@ -1,0 +1,8 @@
+[
+  {"capability":"code","source":"github konstruksi1ssd-stack/cinematic-invitation-transition","outcome":"migrate","status":"verified","next_action":"none"},
+  {"capability":"schema (wishes table, realtime)","source":"drizzle/migrations/0000_migration.sql","outcome":"migrate","status":"verified","next_action":"none"},
+  {"capability":"records (wishes)","source":"old backend public read","outcome":"migrate","status":"verified","next_action":"none - old backend had 0 wishes"},
+  {"capability":"auth identities","source":"none","outcome":"not used","status":"verified","next_action":"none - app has no login"},
+  {"capability":"media files (images, video, music)","source":"old project Lovable Assets","outcome":"re-uploaded","status":"verified","next_action":"none"},
+  {"capability":"secrets / external providers","source":"none","outcome":"not used","status":"verified","next_action":"none"}
+]
