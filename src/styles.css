@@ -265,6 +265,12 @@
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
   mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
 }
+/* tinted variant: the photo takes the panel's own colour so it blends with navy / wine panels */
+@utility garden-scene-tinted { mix-blend-mode: luminosity; }
+/* gentle sway for floral corners, anchored at the corner the vine grows from */
+@keyframes vine-sway { 0%,100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(1.2deg) scale(1.02); } }
+.vine-sway { animation: vine-sway 8s ease-in-out infinite; transform-origin: 2% 2%; }
+@media (prefers-reduced-motion: reduce) { .vine-sway { animation: none; } }
 /* frosted panel used for text that sits over a garden photo */
 @utility glass-garden {
   background: color-mix(in oklab, var(--royal-sage-deep) 55%, transparent);

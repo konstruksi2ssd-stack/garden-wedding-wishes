@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import monogram from "@/assets/monogram.png.asset.json";
+import leavesImg from "@/assets/garden-leaves.webp.asset.json";
 import { wishesQuery } from "@/lib/wishes";
 import { PetalRain, Twinkles } from "@/components/invite/LiveOrnaments";
 import { WishList, WishStats, WishWallHeader, useLiveWishes } from "@/components/invite/WishWall";
@@ -33,6 +34,7 @@ function WishesPage() {
   useLiveWishes();
   return (
     <main className="relative min-h-screen overflow-hidden bg-royal-navy">
+      <img src={leavesImg.url} alt="" className="garden-scene garden-scene-tinted fixed" style={{ ["--scene-opacity" as string]: 0.25 }} />
       <PetalRain count={12} seed={4} className="fixed" />
       <Twinkles count={12} seed={9} className="fixed" />
       <div className="relative mx-auto max-w-3xl px-5 py-14 text-center">

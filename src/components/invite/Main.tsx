@@ -12,7 +12,7 @@ import emblem from "@/assets/emblem.png.asset.json";
 import pathImg from "@/assets/garden-path.webp.asset.json";
 import leavesImg from "@/assets/garden-leaves.webp.asset.json";
 import { ButterflyFlock } from "./Butterfly";
-import { BotanicalSpray, CarvedCorner, FiligreeDivider, Finial, VineCorner } from "./Ornaments";
+import { BotanicalSpray, FiligreeDivider, Finial, VineCorner } from "./Ornaments";
 import { WEDDING } from "@/lib/wedding";
 import { AR_RUM_21 } from "@/lib/verse";
 import { sendWish, wishesQuery, type Wish } from "@/lib/wishes";
@@ -45,19 +45,38 @@ const rise: Variants = { hidden: { opacity: 0, y: 26 }, show: { opacity: 1, y: 0
 
 const TONE_BG = { navy: "bg-royal-navy", wine: "bg-royal-wine", garden: "bg-royal-garden" } as const;
 
+/** Translucent garden photo that takes on the panel's colour (navy/wine) or keeps its own greens (garden). */
+function GardenScene({ src, opacity = 0.28, tinted = true }: { src: string; opacity?: number; tinted?: boolean }) {
+  return <img src={src} alt="" loading="lazy" className={`garden-scene ${tinted ? "garden-scene-tinted" : ""}`} style={{ ["--scene-opacity" as string]: opacity }} />;
+}
+
+const FLIP = { tl: "", tr: "-scale-x-100", bl: "-scale-y-100", br: "rotate-180" } as const;
+/**
+ * Floral gold corner pinned to a panel corner. The flip lives on the wrapper (centre origin) so the
+ * ornament stays flush in its corner; only the inner vine sways from its anchored corner.
+ */
+function FloralCorner({ pos, className = "", delay = 0 }: { pos: keyof typeof FLIP; className?: string; delay?: number }) {
+  return (
+    <div aria-hidden className={`pointer-events-none absolute ${FLIP[pos]} ${className}`}>
+      <VineCorner className="vine-sway block w-full" style={{ animationDelay: `${delay}s` }} />
+    </div>
+  );
+}
+
 /** A full-width panel; `scene` lays a translucent garden photo over the tone so not every panel is plain. */
-function Band({ children, tone = "navy", className = "", corners = true, seed = 0, butterflies = 0, scene, sceneOpacity = 0.3 }: { children: ReactNode; tone?: keyof typeof TONE_BG; className?: string; corners?: boolean; seed?: number; butterflies?: number; scene?: string; sceneOpacity?: number }) {
+function Band({ children, tone = "navy", className = "", corners = true, seed = 0, butterflies = 0, scene, sceneOpacity = 0.26 }: { children: ReactNode; tone?: keyof typeof TONE_BG; className?: string; corners?: boolean; seed?: number; butterflies?: number; scene?: string; sceneOpacity?: number }) {
   return (
     <section className={`relative overflow-hidden ${TONE_BG[tone]}`}>
-      {scene && <img src={scene} alt="" loading="lazy" className="garden-scene" style={{ ["--scene-opacity" as string]: sceneOpacity }} />}
+      {/* every panel carries a garden photo; alternate path / leaves so neighbours differ */}
+      <GardenScene src={scene ?? (seed % 2 ? pathImg.url : leavesImg.url)} opacity={sceneOpacity} tinted={tone !== "garden"} />
       <div className="absolute inset-x-0 top-0 h-px bg-royal-gold/40" />
       <PetalRain count={6} seed={seed} />
       <Twinkles count={7} seed={seed} />
       {butterflies > 0 && <ButterflyFlock count={butterflies} />}
       {corners && (
         <>
-          <CarvedCorner className="orn-breathe pointer-events-none absolute left-1 top-1 w-14 opacity-60 sm:w-20" style={{ transformOrigin: "top left" }} />
-          <CarvedCorner className="orn-breathe pointer-events-none absolute bottom-1 right-1 w-14 rotate-180 opacity-60 sm:w-20" style={{ transformOrigin: "top left", animationDelay: "-3s" }} />
+          <FloralCorner pos="tl" className="left-1.5 top-1.5 w-16 opacity-85 sm:w-24" />
+          <FloralCorner pos="br" className="bottom-1.5 right-1.5 w-16 opacity-85 sm:w-24" delay={-3} />
         </>
       )}
       <div className={`relative mx-auto max-w-md px-5 py-16 text-center sm:max-w-2xl sm:py-24 ${className}`}>
@@ -101,8 +120,8 @@ function Hero({ guest }: { guest: string }) {
       {/* double gold frame */}
       <div className="pointer-events-none absolute inset-3 rounded-[1.75rem] border border-royal-gold/55 sm:inset-6" />
       <div className="pointer-events-none absolute inset-[20px] rounded-[1.4rem] border border-royal-gold/20 sm:inset-[34px]" />
-      <VineCorner className="vine-sway pointer-events-none absolute left-2 top-2 w-24 opacity-90 sm:left-4 sm:top-4 sm:w-36" style={{ transformOrigin: "top left" }} />
-      <VineCorner className="vine-sway pointer-events-none absolute right-2 top-2 w-24 -scale-x-100 opacity-90 sm:right-4 sm:top-4 sm:w-36" style={{ transformOrigin: "top left", animationDelay: "-3.5s" }} />
+      <FloralCorner pos="tl" className="left-2 top-2 w-24 opacity-90 sm:left-4 sm:top-4 sm:w-36" />
+      <FloralCorner pos="tr" className="right-2 top-2 w-24 opacity-90 sm:right-4 sm:top-4 sm:w-36" delay={-3.5} />
       <BotanicalSpray className="sway pointer-events-none absolute -bottom-2 -left-4 w-40 opacity-90 sm:w-64" />
       <BotanicalSpray className="sway pointer-events-none absolute -bottom-2 -right-4 w-40 opacity-90 sm:w-64" style={{ ["--orn-flip" as string]: "scaleX(-1)" }} />
 
@@ -135,8 +154,8 @@ function Verse() {
       <p className="font-caps text-[10px] uppercase tracking-[0.38em] text-royal-gold-light/75 sm:text-xs">Firman Allah SWT</p>
       <h2 className="mt-1 font-script text-[2.6rem] leading-tight text-royal-gold sm:text-6xl">{AR_RUM_21.reference.replace("QS. ", "Q.S. ")}</h2>
       <div className="glass-garden relative mx-auto mt-6 rounded-2xl border border-royal-gold/40 px-5 py-8 sm:px-10">
-        <VineCorner className="vine-sway pointer-events-none absolute -left-2 -top-2 w-14 opacity-80" style={{ transformOrigin: "top left" }} />
-        <VineCorner className="vine-sway pointer-events-none absolute -bottom-2 -right-2 w-14 rotate-180 opacity-80" style={{ transformOrigin: "top left", animationDelay: "-2s" }} />
+        <FloralCorner pos="tl" className="-left-2 -top-2 w-14 opacity-80" />
+        <FloralCorner pos="br" className="-bottom-2 -right-2 w-14 opacity-80" delay={-2} />
         <blockquote dir="rtl" lang="ar" className="font-arabic text-[1.45rem] leading-[2.25] text-ivory sm:text-[1.9rem] sm:leading-[2.2]" style={{ wordSpacing: "0.08em" }}>
           {AR_RUM_21.arabic}
         </blockquote>
@@ -195,9 +214,11 @@ function Couple() {
     <section className="relative overflow-hidden bg-royal-navy">
       {/* burgundy crown band, as in the reference */}
       <div className="absolute inset-x-0 top-0 h-[42%] rounded-b-[50%_3.5rem] border-b border-royal-gold/45 bg-royal-wine" />
+      <GardenScene src={leavesImg.url} opacity={0.26} />
       <PetalRain count={6} seed={5} />
       <Twinkles count={8} seed={5} />
-      <CarvedCorner className="orn-breathe pointer-events-none absolute bottom-1 right-1 w-14 rotate-180 opacity-60 sm:w-20" style={{ transformOrigin: "top left" }} />
+      <FloralCorner pos="bl" className="bottom-1.5 left-1.5 w-16 opacity-85 sm:w-24" />
+      <FloralCorner pos="br" className="bottom-1.5 right-1.5 w-16 opacity-85 sm:w-24" delay={-3} />
       <div className="relative mx-auto max-w-md px-4 py-16 text-center sm:max-w-3xl sm:py-24">
         <motion.div {...reveal}>
           <p className="font-caps text-[10px] uppercase tracking-[0.38em] text-royal-gold-light/75 sm:text-xs">Bismillahirrahmanirrahim</p>
@@ -418,6 +439,7 @@ export function Main({ guest }: { guest: string }) {
 
       <section className="relative overflow-hidden bg-royal-navy px-6 pb-28 pt-16 text-center">
         <div className="absolute inset-x-0 top-0 h-[38%] rounded-b-[50%_3rem] border-b border-royal-gold/40 bg-royal-wine" />
+        <GardenScene src={pathImg.url} opacity={0.3} />
         <PetalRain count={9} seed={11} />
         <Twinkles count={10} seed={11} />
         <ButterflyFlock count={3} />
